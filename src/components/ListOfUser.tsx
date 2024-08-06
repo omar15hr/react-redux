@@ -9,17 +9,25 @@ import {
   TableHeaderCell,
   TableRow,
   Title,
-  Badge
+  Badge,
 } from "@tremor/react";
-
-
+import { useAppSelector } from "../hooks/useStore";
+import { useUsersActions } from "../hooks/useUsersActions";
 
 export function ListOfUsers() {
+  const users = useAppSelector((state) => state.users);
+  const { removeUser } = useUsersActions();
+
   return (
     <Card className="rounded border-none shadow-lg">
       <Title>
         Users
-        <Badge className="bg-blue-200 rounded gap-4" style={{ marginLeft: "8px"}}>{users.length}</Badge>
+        <Badge
+          className="bg-blue-200 rounded gap-4"
+          style={{ marginLeft: "8px" }}
+        >
+          {users.length}
+        </Badge>
       </Title>
       <Table className="mt-8">
         <TableHead>
@@ -58,7 +66,7 @@ export function ListOfUsers() {
               <TableCell>{item.email}</TableCell>
               <TableCell>{item.github}</TableCell>
               <TableCell className="">
-                <button> 
+                <button>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -74,8 +82,9 @@ export function ListOfUsers() {
                     />
                   </svg>
                 </button>
-                <button>
+                <button onClick={() => removeUser(item.id)} type="button">
                   <svg
+                    aria-label="Delete user"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
