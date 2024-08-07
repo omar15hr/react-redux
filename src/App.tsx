@@ -1,12 +1,16 @@
+import { CreateNewUser, ListOfUsers } from "./components";
+import { Toaster } from "sonner";
+
 import "./App.css";
-import { ListOfUsers } from "./components/ListOfUser";
 
 function App() {
   return (
     <>
-      <h1 className="p-10 text-2xl font-bold">Proyecto con React y Redux</h1>
+      <h1 className="mb-4 text-2xl font-bold">Proyecto con React y Redux</h1>
 
       <ListOfUsers />
+      <CreateNewUser />
+      <Toaster richColors />
     </>
   );
 }

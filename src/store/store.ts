@@ -1,9 +1,34 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, type Middleware } from "@reduxjs/toolkit";
 import usersReducer from "./users/slice";
+import { toast } from "sonner";
 
-const persistanceLocalStorageMiddleware = (store) => (next) => (action) => {
+const persistanceLocalStorageMiddleware: Middleware =
+  (store) => (next) => (action) => {
+    next(action);
+    localStorage.setItem("__redux_state__", JSON.stringify(store.getState()));
+  };
+
+const syncWithDatabase: Middleware = (store) => (next) => (action) => {
+  const { type, payload } = action;
+
+  console.log(action);
+  console.log(store);
   next(action);
-  localStorage.setItem("__redux_state__", JSON.stringify(store.getState()));
+
+  if (type === "users/deleteUserById") {
+    fetch(`https://jsonplaceholder.typicode.com/users/${payload}`, {
+      method: "DELETE",
+    })
+      .then((res) => {
+        if (res.ok) {
+          toast.success(`Usuario ${payload} eliminado correctamente`);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error(`Error al eliminar el usuario ${payload}`);
+      });
+  }
 };
 
 export const store = configureStore({
@@ -11,7 +36,10 @@ export const store = configureStore({
     users: usersReducer,
   },
   middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().concat(persistanceLocalStorageMiddleware);
+    return getDefaultMiddleware().concat(
+      persistanceLocalStorageMiddleware,
+      syncWithDatabase
+    );
   },
 });
 
