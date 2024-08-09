@@ -8,8 +8,13 @@ const persistanceLocalStorageMiddleware: Middleware =
     localStorage.setItem("__redux_state__", JSON.stringify(store.getState()));
   };
 
+  interface ActionWithPayload<T> {
+    type: string;
+    payload: T;
+  }
+
 const syncWithDatabase: Middleware = (store) => (next) => (action) => {
-  const { type, payload } = action;
+  const { type, payload } = action as ActionWithPayload<unknown>;
 
   console.log(action);
   console.log(store);
